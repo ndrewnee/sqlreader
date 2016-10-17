@@ -1,0 +1,1 @@
+INSERT INTO some_table(name) VALUES(:name)
