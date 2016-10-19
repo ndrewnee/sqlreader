@@ -4,7 +4,7 @@
 
 Are writing like this:
 ```go
-err := db.Exec('SELECT * FROM some_table')
+err := db.Exec("SELECT * FROM some_table")
 ```
 or like this?
 ```go
