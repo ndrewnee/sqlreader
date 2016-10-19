@@ -1,4 +1,7 @@
-# sqlreader
+# SqlReader
+
+[![Build Status](https://travis-ci.org/ndrewnee/sqlreader.svg?branch=master)](https://travis-ci.org/ndrewnee/sqlreader)
+
 Are writing like this:
 ```go
 err := db.Exec('SELECT * FROM some_table')
@@ -16,6 +19,11 @@ err := db.Exec(FleetUpdateStatus)
 I don't like writing sql statements in code. It has many disadvantages: no syntax-highliting, no auto-complete, etc.
 This little library helps you to use *.sql files instead of const strings
 
+## Install
+```bash
+go get "github.com/ndrewnee/sqlreader"
+```
+
 ## Usage
 
 Import the package:
@@ -25,10 +33,6 @@ import (
 	"github.com/ndrewnee/sqlreader"
 )
 
-```
-
-```bash
-go get "github.com/ndrewnee/sqlreader"
 ```
 
 ## Example
