@@ -4,6 +4,11 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"errors"
+)
+
+var (
+	ErrSqlsNotFound = errors.New("Required sqls not found")
 )
 
 // New is just a constructor of SqlReader
@@ -27,6 +32,21 @@ type SqlReader struct {
 	filePaths []string
 
 	sqlFiles map[string]string
+}
+
+func (s *SqlReader) Check(required ...string) (notFoundSqls []string, err error) {
+	for _, sql := range required {
+		_, ok := s.sqlFiles[sql]
+		if !ok {
+			notFoundSqls = append(notFoundSqls, sql)
+		}
+	}
+
+	if len(notFoundSqls) > 0 {
+		err = ErrSqlsNotFound
+	}
+
+	return
 }
 
 // Gets sql string by key. Key is a path of file without root directory and extension
