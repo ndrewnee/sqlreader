@@ -39,12 +39,14 @@ import (
 
 
 ```go
-sqls, err := sqlreader.New("path-with-sqls")
+// First param is path with sqls
+// Then names of sqls that are required (Optional)
+sqls, err := sqlreader.New("path-with-sqls", "required_sql")
 if err != nil {
   panic(err)
 }
 
-sql := sqls.Get("some_sql")
+sql := sqls.Get("required_sql")
 db.Exec(sql)
 
 ```

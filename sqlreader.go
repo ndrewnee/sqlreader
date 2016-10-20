@@ -4,18 +4,14 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"errors"
-)
-
-var (
-	ErrSqlsNotFound = errors.New("Required sqls not found")
+	"fmt"
 )
 
 // New is just a constructor of SqlReader
 // E.g. sqlReader, err := New("path")
 // @param path is a path with sql files inside
 // Reads all sql files once, then you can use method sqlReader.Get to get sql
-func New(path string) (sqlReader *SqlReader, err error) {
+func New(path string, requiredSqls ...string) (sqlReader *SqlReader, err error) {
 	sqlReader = &SqlReader{
 		path:      path,
 		filePaths: make([]string, 0),
@@ -23,6 +19,11 @@ func New(path string) (sqlReader *SqlReader, err error) {
 	}
 
 	err = sqlReader.read()
+	if err != nil {
+		return
+	}
+
+	err = sqlReader.check(requiredSqls...)
 	return
 }
 
@@ -34,20 +35,6 @@ type SqlReader struct {
 	sqlFiles map[string]string
 }
 
-func (s *SqlReader) Check(required ...string) (notFoundSqls []string, err error) {
-	for _, sql := range required {
-		_, ok := s.sqlFiles[sql]
-		if !ok {
-			notFoundSqls = append(notFoundSqls, sql)
-		}
-	}
-
-	if len(notFoundSqls) > 0 {
-		err = ErrSqlsNotFound
-	}
-
-	return
-}
 
 // Gets sql string by key. Key is a path of file without root directory and extension
 // E.g. if file saved as "/path/some_dir/insert.sql"
@@ -58,6 +45,24 @@ func (s *SqlReader) Get(key string) (sql string) {
 	key = filepath.FromSlash(key)
 
 	sql = s.sqlFiles[key]
+	return
+}
+
+// Checks for required sqls in map, returns error if any of them wasn't found
+func (s *SqlReader) check(requiredSqls ...string) (err error) {
+	var notFoundSqls []string
+
+	for _, sql := range requiredSqls {
+		_, ok := s.sqlFiles[sql]
+		if !ok {
+			notFoundSqls = append(notFoundSqls, sql)
+		}
+	}
+
+	if len(notFoundSqls) > 0 {
+		err = fmt.Errorf("Required sqls not found: %v", notFoundSqls)
+	}
+
 	return
 }
 
